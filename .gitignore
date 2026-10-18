@@ -1,0 +1,8 @@
+# Built paks go on GitHub Releases, not in the repo
+*.pak
+
+# Extracted game data (Mojang/Microsoft assets) - keep local only
+discovery/*.json
+
+# Imported session archive from the original Linux setup
+session-export.zip
