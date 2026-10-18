@@ -38,7 +38,9 @@ After editing in Unreal, run `.\tools\sync.ps1 -FromModKit` to copy the changes 
 | `ModKit/UE4Project/Content/Mods/ThirdPersonCam/` | `BP_ThirdPersonCam` (all logic), `SG_TPCSettings` (save), `W_TPCMenu` (F7 panel), `W_TPCDebug` |
 | `ModKit/UE4Project/Content/BPLoader/{InGame,Lobby}/` | Loader levels that spawn the camera actor in missions and camp |
 | `ModKit/UE4Project/Source/Dungeons/BasePlayerController.h` | Editor-only stub of the game's native class, exposing `RightStickDodgingEnabled` |
-| `PLAN.md` | Design notes, discovery findings and dev log |
+| `docs/TECHNICAL.md` | How the Blueprint works, game internals we found, and what didn't work |
+| `tools/sync.ps1` | Copies the mod's files between this repo and a Mod Kit checkout |
+| `release/README.txt` | The readme shipped alongside the `.pak` in releases |
 
 ## How it works (short)
-The Blueprint Loader streams in a level containing `BP_ThirdPersonCam`. That actor switches the view target to its own spring-arm camera and reads the right stick directly. It disables the game's stick-dodge by setting the native `BasePlayerController.RightStickDodgingEnabled` every frame while active. See `PLAN.md` for the details.
+The Blueprint Loader streams in a level containing `BP_ThirdPersonCam`. That actor switches the view target to its own spring-arm camera and reads the right stick directly. It disables the game's stick-dodge by setting the native `BasePlayerController.RightStickDodgingEnabled` every frame while active. See [docs/TECHNICAL.md](docs/TECHNICAL.md) for the details.
