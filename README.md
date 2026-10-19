@@ -28,7 +28,7 @@ Requirements: Unreal Engine 4.22, Python 3.8+, and Build Tools for Visual Studio
    `"<UE_4.22>\Engine\Build\BatchFiles\Build.bat" DungeonsEditor Win64 Development -Project="<ModKit>\UE4Project\Dungeons.uproject" -WaitMutex`
    If `UE4Project\Binaries\Win64` contains a `UE4Editor-Dungeons-NNNN.dll`, remove it; otherwise the editor loads that stale copy.
 4. Open the project with `open_editor.bat`, which skips the Project Browser's compiler check.
-5. Close the editor, then run `cook_assets.bat` and `package.bat` (dev build into `~mods`) or `Tools\pack_compressed.bat` (release).
+5. Close the editor, run `cook_assets.bat`, then `.\tools\package.ps1` (dev build into `~mods`) or `.\tools\package.ps1 -Out .\ThirdPersonCam.pak -Compress` (release). Don't use the Mod Kit's `package.bat`: it packs everything cooked in the Mod Kit, and the Mod Kit is shared with [AnalogMove](https://github.com/AlexWooz/Dungeons-AnalogMovement), whose files would end up in the `.pak` too.
 
 After editing in Unreal, run `.\tools\sync.ps1 -FromModKit` to copy the changes back into this repo before committing.
 
@@ -40,6 +40,7 @@ After editing in Unreal, run `.\tools\sync.ps1 -FromModKit` to copy the changes 
 | `ModKit/UE4Project/Source/Dungeons/BasePlayerController.h` | Editor-only stub of the game's native class, exposing `RightStickDodgingEnabled` |
 | `docs/TECHNICAL.md` | How the Blueprint works, game internals we found, and what didn't work |
 | `tools/sync.ps1` | Copies the mod's files between this repo and a Mod Kit checkout |
+| `tools/package.ps1` | Packs only this mod's cooked assets into a `.pak` |
 | `release/README.txt` | The readme shipped alongside the `.pak` in releases |
 
 ## How it works (short)

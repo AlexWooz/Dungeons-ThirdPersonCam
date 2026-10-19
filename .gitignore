@@ -6,3 +6,6 @@ discovery/
 
 # Imported session archive from the original Linux setup
 session-export.zip
+
+# Staging folder from tools/package.ps1
+build/
