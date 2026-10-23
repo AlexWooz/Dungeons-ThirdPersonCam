@@ -12,8 +12,9 @@ if ($FromModKit -eq $ToModKit) { throw 'Pass exactly one of -FromModKit or -ToMo
 $repo = Join-Path $PSScriptRoot '..\ModKit'
 $paths = @(
     'UE4Project\Content\Mods\ThirdPersonCam',
-    'UE4Project\Content\BPLoader\InGame',
-    'UE4Project\Content\BPLoader\Lobby',
+    # Only our loader levels: other mods (AnalogMove) keep theirs in the same folders.
+    'UE4Project\Content\BPLoader\InGame\TPC_Ingame.umap',
+    'UE4Project\Content\BPLoader\Lobby\TPC_Lobby.umap',
     'UE4Project\Source\Dungeons\BasePlayerController.h',
     'open_editor.bat'
 )
