@@ -8,6 +8,7 @@ A Blueprint mod for **Minecraft Dungeons** (Steam, v1.17.0.0, UE 4.22) that repl
 - The left stick moves the hero relative to the camera.
 - **R3** recenters the camera behind the hero.
 - Wall collision pulls the camera in front of walls and cliffs.
+- **F10** hides the game's HUD (hotbar, health, minimap, prompts) for clean screenshots, and brings it back on the second press.
 - **F7** opens a settings panel. Use Up/Down to select and Left/Right to change Distance, FOV, Sensitivity and Invert Y. Settings are saved automatically.
 
 ## Install

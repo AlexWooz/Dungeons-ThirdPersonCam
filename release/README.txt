@@ -19,6 +19,7 @@ CONTROLS
 - F7            Open/close the settings panel
     Up/Down     Select a setting
     Left/Right  Change it (Distance, FOV, Sensitivity, Invert Y) - saved automatically
+- F10           Hide/show the game's HUD (for screenshots)
 
 The left stick moves the hero relative to the camera.
 

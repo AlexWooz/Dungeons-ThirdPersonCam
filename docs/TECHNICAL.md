@@ -53,6 +53,13 @@ How the mod works, what we learned about Minecraft Dungeons' internals (v1.17.0.
 
 `RefreshMenu` builds the text with one Format Text node; each line's `>` marker is chosen by `Select String (MenuRow == n)`.
 
+**F10 HUD toggle** (works whether the camera is on or off). Variables: `HUDHidden`, `HiddenWidgets` (UserWidget array) and `HiddenVis` (ESlateVisibility array, parallel to `HiddenWidgets`).
+- **Hide:** `HUDHidden = true`, then a one-shot 0.1 s timer runs the custom event `HUDHidePass`. A looping 0.1 s timer starts `HUDKeepHidden`, and `PC.GetHUD().bShowHUD = false` turns off the native HUD's canvas drawing, which draws a black strip behind the hotbar.
+- **`HUDHidePass`:** `GetAllWidgetsOfClass(UserWidget, TopLevelOnly)`. Each widget that `IsVisible` and isn't `MenuWidget` or `DebugWidget` is added to `HiddenWidgets`, its current visibility goes into `HiddenVis`, and it's set to `Hidden`. Our F7 panel and debug text therefore stay usable.
+- **`HUDKeepHidden`:** loops over `HiddenWidgets` only and sets any visible ones back to `Hidden`, in case the game re-shows its HUD.
+- **Show:** `HUDHidden = false`, clear both timers, `bShowHUD = true`. Then, for each entry, restore `HiddenVis[i]` but only if the widget is still `Hidden`, so a popup the game closed in the meantime doesn't come back. Finally clear both arrays.
+- The arrays die with the actor on level change, and the new level's HUD starts visible.
+
 ## Game internals (findings)
 - **Base template:** UE TopDown. Redirects map `TP_TopDownPlayerController` → `DungeonsPlayerController` and `TP_TopDownGameMode` → `DungeonsGameMode` (native, `/Script/Dungeons`).
 - **Game modes:**
@@ -64,7 +71,8 @@ How the mod works, what we learned about Minecraft Dungeons' internals (v1.17.0.
 - **Input names** (`DefaultInput.ini`):
   - Right stick → `RollForward/Backward/Left/RightGamepad`; left stick → `Move*Gamepad`, all at scale +1.
   - R3 → `RightStickClick`.
-  - F1–F5, F9 (`DeleteCharacter`) and F11 are taken; F6 and F7 are free.
+  - F1–F5, F9 (`DeleteCharacter`) and F11 (fullscreen) are taken. F6, F7 and F10 are free, F8 is used by AnalogMove, and F12 is Steam's screenshot key.
+- **HUD:** the game mode's `HUD = DungeonHUD` is native. The visible HUD (hotbar, health, minimap, prompts) is made of UMG widgets added straight to the viewport, plus some canvas drawing in `DungeonHUD` (a black strip behind the hotbar), which `bShowHUD` turns off. Name tags and health bars above characters aren't top-level viewport widgets, so the F10 toggle doesn't touch them.
 - **Stick dodge:** controlled by the native `bool RightStickDodgingEnabled` (with `RightStickHasReset`) on `/Script/Dungeons.BasePlayerController`.
   - `BP_PlayerController` turns it off while the quick-chat wheel is open, so it's Blueprint-writable.
   - The cvar `Dungeons.Experimental.EnableDodge` (read in `IsDodgeEnabled`) gates the Dodge *action* instead, so it isn't the stick dodge.
@@ -81,6 +89,7 @@ Building it needs VS 2019 Build Tools. The Mod Kit ships a stale hot-reload `UE4
 - **Removing the `Roll*Gamepad` axis mappings** at runtime (`InputSettings.RemoveAxisMapping` + rebuild) doesn't stop it either. Re-adding them from EndPlay also **crashed the game on quit**, so never touch InputSettings during teardown.
 - **`set BasePlayerController RightStickDodgingEnabled False`** via `ExecuteConsoleCommand` had no effect, either because it's blocked in shipping or because it got overwritten.
 - **SpringArm's built-in collision test** collapses the arm into the hero, because the probe starts inside the pawn. It's replaced by the custom trace.
+- **Running `GetAllWidgetsOfClass` on a 0.1 s timer** made the game stutter while the HUD was hidden. Recordings showed about 15 duplicated frames per second even at 300 FPS. It iterates every `UUserWidget` object in memory, and Dungeons has many. It now runs once per press, and the repeating pass only touches widgets it already knows.
 - **An editable config file** isn't possible: stock Blueprints can't read files, and the C++ module doesn't ship. Settings live in the SaveGame and the F7 panel.
 
 ## Known issues / ideas
